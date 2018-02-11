@@ -1,0 +1,15 @@
+{
+  "name": "profesor-frisby-functional",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "nodemon": "1.14.12"
+  }
+}
