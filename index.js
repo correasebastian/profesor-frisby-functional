@@ -8,19 +8,26 @@ const Box = x =>
     } 
 })
 
-const nextCharForNumberString = str =>
+const moneyToFloat = str =>
   Box(str)
-  .inspect()
-  .map(s => s.trim())
-  .inspect()
-  .map(r => parseInt(r))
-  .inspect()
-  .map(i => i + 1)
-  .inspect()
-  .map(i => String.fromCharCode(i))
-  .inspect()
-  .fold(c => c.toLowerCase())
+  .map(s => s.replace(/\$/g, ''))
+  .map(r => parseFloat(r))
 
-const result = nextCharForNumberString('  64 ')
+const percentToFloat = str =>
+  Box(str.replace(/\%/g, ''))
+  .map(replaced => parseFloat(replaced))
+  .map(number => number * 0.01)
 
+  
+const applyDiscount = (price, discount) =>
+    moneyToFloat(price)
+    .inspect()
+    .fold(cost =>
+        percentToFloat(discount)
+        .inspect()
+        .fold(savings =>
+            cost - cost * savings)
+    )
+
+const result = applyDiscount('$5.00', '20%')
 console.log(result)
