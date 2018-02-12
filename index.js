@@ -1,55 +1,31 @@
-const Sum = x =>
-({
-  x,
-  concat: ({x: y}) =>
-    Sum(x + y),
-  inspect: () =>
-    `Sum(${x})`,
-  toString: () =>
-    `Sum(${x})`
-})
-
-Sum.empty = () => Sum(0)
-
-//const res = Sum(1).concat(Sum(2))
-
-const All = x =>
-({
-  x,
-  concat: ({x: y}) =>
-    All(x && y),
-  inspect: () =>
-    `All(${x})`,
-  toString: () =>
-    `All(${x})`
-})
-
-All.empty = () => All(true)
-
-//const res = All(false).concat(All(true))
-
-const First = x =>
-({
-  x,
-  concat: _ =>
-    First(x),
-  inspect: () =>
-    `First(${x})`,
-  toString: () =>
-    `First(${x})`
-})
-
-// const res = First("blah").concat(First("ice cream")).concat(First('meta programming'))
+const LazyBox = g =>
+    ({
+        fold: f => f(g()),
+        map: f => LazyBox(() => f(g())),
+        inspect: function () {
+            console.log('***************');
+            console.log(g());
+            return this;
+        }
+    })
 
 
-const sum = xs =>
-  xs.reduce((acc, x) => acc + x, 0)
+    let a = 'a'
+    let t = 't'
+    let n = 'n'
+    let v = 'v'
+    let z = 'z'
 
-const all = xs =>
-  xs.reduce((acc, x) => acc && x, true)
+const result = LazyBox(() => '  64 ')
+    .inspect()
+    .map(abba =>  console.log(a+=1) ||  abba.trim())
+    .inspect()
+    .map(trimmed => console.log(t+=1) || new Number(trimmed))
+    .inspect()
+    .map(number => console.log(n+=1) || number + 1)
+    .inspect()
+    .map(x => console.log(v+=1) || String.fromCharCode(x))
+    .inspect()
+   .fold(x => console.log(z+=1) || x.toLowerCase())
 
-const first = xs =>
-  xs.reduce((acc, x) => acc)
-
-console.log(first([1,2,3]))
-
+console.log(result)
