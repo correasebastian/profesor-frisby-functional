@@ -1,13 +1,17 @@
-const {Map:IMap} = require('immutable');
-
 const Sum = x =>
 ({
   x,
   concat: ({x: y}) =>
     Sum(x + y),
   inspect: () =>
+    `Sum(${x})`,
+  toString: () =>
     `Sum(${x})`
 })
+
+Sum.empty = () => Sum(0)
+
+//const res = Sum(1).concat(Sum(2))
 
 const All = x =>
 ({
@@ -15,8 +19,14 @@ const All = x =>
   concat: ({x: y}) =>
     All(x && y),
   inspect: () =>
+    `All(${x})`,
+  toString: () =>
     `All(${x})`
 })
+
+All.empty = () => All(true)
+
+//const res = All(false).concat(All(true))
 
 const First = x =>
 ({
@@ -24,13 +34,22 @@ const First = x =>
   concat: _ =>
     First(x),
   inspect: () =>
+    `First(${x})`,
+  toString: () =>
     `First(${x})`
 })
 
-const acct1 = IMap({ name: First('Nico'), isPaid: All(true), points: Sum(10), friends: ['Franklin'] })
+// const res = First("blah").concat(First("ice cream")).concat(First('meta programming'))
 
-const acct2 = IMap({ name: First('Nico'), isPaid: All(false), points: Sum(2), friends: ['Gatsby'] })
 
-const res = acct1.concat(acct2)
+const sum = xs =>
+  xs.reduce((acc, x) => acc + x, 0)
 
-console.log(res.toJS());
+const all = xs =>
+  xs.reduce((acc, x) => acc && x, true)
+
+const first = xs =>
+  xs.reduce((acc, x) => acc)
+
+console.log(first([1,2,3]))
+
