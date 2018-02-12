@@ -9,6 +9,7 @@ const Box = x =>
     })
 const Right = x =>
     ({
+        chain: f => f(x),
         map: f => Right(f(x)),
         fold: (f, g) => g(x),
         inspect: function () {
@@ -19,6 +20,7 @@ const Right = x =>
 
 const Left = x =>
     ({
+        chain: f => f(x),
         map: f => Left(x),
         fold: (f, g) => f(x),
         inspect: function () {
@@ -30,33 +32,40 @@ const Left = x =>
 const fromNullable = x =>
     x != null ? Right(x) : Left(null)
 
-const findColor = name =>
-    fromNullable({
-        red: '#ff4444',
-        blue: '#3b5998',
-        yellow: '#fff68f'
-    }[name])
+/////
 
-const resGood = findColor('red')
+
+const fs = {
+    readFileSync: name => {
+        if (name === 'config.json') {
+            return JSON.stringify({
+                port: 8888
+            })
+        } else {
+            throw ('missing file!')
+        }
+    }
+}
+
+
+const tryCatch = f => {
+    try {
+        return Right(f())
+    } catch (e) {
+        return Left(e)
+    }
+}
+
+const getPort = () =>
+    tryCatch(() => fs.readFileSync('config.json'))
     .inspect()
-    .map(c => c.slice(1))
-    .inspect()
-    .map(c => c.toUpperCase())
-    .inspect()
-    .fold(e => 'no color',
-        x => x
+    .chain(c =>
+        tryCatch(() => JSON.parse(c))
+        .inspect()
     )
-
-console.log(resGood)
-
-const resBad = findColor('notexistColorXSXSXS')
     .inspect()
-    .map(c => c.slice(1))
-    .inspect()
-    .map(c => c.toUpperCase())
-    .inspect()
-    .fold(e => 'no color',
-        x => x
-    )
+    .fold(e => 3000, c => c.port)
 
-console.log(resBad)
+const result = getPort()
+
+console.log(result)
