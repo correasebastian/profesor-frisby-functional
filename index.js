@@ -32,21 +32,6 @@ const Left = x =>
 const fromNullable = x =>
     x != null ? Right(x) : Left(null)
 
-/////
-
-
-const fs = {
-    readFileSync: name => {
-        if (name === 'config.json') {
-            return JSON.stringify({
-                port: 8888
-            })
-        } else {
-            throw ('missing file!')
-        }
-    }
-}
-
 
 const tryCatch = f => {
     try {
@@ -56,16 +41,48 @@ const tryCatch = f => {
     }
 }
 
-const getPort = () =>
-    tryCatch(() => fs.readFileSync('config.json'))
-    .inspect()
-    .chain(c =>
-        tryCatch(() => JSON.parse(c))
-        .inspect()
-    )
-    .inspect()
-    .fold(e => 3000, c => c.port)
+/////
 
-const result = getPort()
+const Sum = x =>
+({
+  x,
+  concat: ({x: y}) =>
+    Sum(x + y),
+  inspect: () =>
+    `Sum(${x})`,
+  toString: () =>
+    `Sum(${x})`
+})
 
-console.log(result)
+const resSum = Sum(1).concat(Sum(2))
+
+console.log(resSum);
+
+
+const All = x =>
+({
+  x,
+  concat: ({x: y}) =>
+    All(x && y),
+  inspect: () =>
+    `All(${x})`,
+  toString: () =>
+    `All(${x})`
+})
+
+const resAll = All(false).concat(All(true))
+
+console.log(resAll);
+
+const First = x =>
+({
+  concat: _ =>
+    First(x),
+  inspect: () =>
+    `First(${x})`,
+  toString: () =>
+    `First(${x})`
+})
+
+const res = First("blah").concat(First("ice cream")).concat(First('meta programming'))
+console.log(res)
