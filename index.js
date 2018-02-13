@@ -1,38 +1,40 @@
-const Box = x =>
-    ({
+function Box (x) {
+    return    ({
+        chain: f => f(x),
         map: f => Box(f(x)),
         fold: f => f(x),
         inspect: function () {
             console.log(`Box(${x})`);
             return this;
         }
-    })
+    });
+}
+ 
+Box.of = (x) => Box(x)
 
-/* functors
-    fx.map(f).map(g) == fx.map(x => g(f(x)))
-    fx.map(id) == id(fx)
+const join = m =>
+    m.chain(x => x)
 
+/* Monads
+   join(m.map(join)) == join(join(m)
+    join(Box.of(m) == join(m.map(Box.of))
 */
 
 
- // fx.map(f).map(g) == fx.map(x => g(f(x)))
-const res1 = Box('squirrels')
-    .map(s => s.substr(5))
-    .map(s => s.toUpperCase())
-console.log(res1)
+//join(m.map(join)) == join(join(m)
+const m = Box(Box(Box(3)))
 
-const res2 = Box('squirrels')
-    .map(s => s.substr(5).toUpperCase())
+const res1 = join(m.map(join))
+const res2 = join(join(m))
 
-console.log(res2)
+console.log(res1,res2);
 
 
-// fx.map(id) == id(fx)
+//join(Box.of(m) == join(m.map(Box.of))
 
-const id = x => x
+const mo = Box('wonder')
 
-const res3 = Box('crayons').map(id)
-const res4 = id(Box('crayons'))
+const res3 = join(Box.of(mo))
+const res4 = join(mo.map(Box.of))
 
-console.log(res3)
-console.log(res4)
+console.log(res3,res4);
