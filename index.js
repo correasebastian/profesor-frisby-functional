@@ -1,40 +1,19 @@
-function Box (x) {
-    return    ({
-        chain: f => f(x),
-        map: f => Box(f(x)),
-        fold: f => f(x),
-        inspect: function () {
-            console.log(`Box(${x})`);
-            return this;
-        }
-    });
-}
- 
-Box.of = (x) => Box(x)
+const add = x => y => x + 1
+const inc = add(1)
+const modulo = dvr => dvd => dvd % dvr
+const replace = regex => repl => str =>
+  str.replace(regex, repl)
 
-const join = m =>
-    m.chain(x => x)
+const isOdd = modulo(2)
 
-/* Monads
-   join(m.map(join)) == join(join(m)
-    join(Box.of(m) == join(m.map(Box.of))
-*/
+const filter = pred => xs => xs.filter(pred)
+const map = f => xs => xs.map(f)
 
+const censor = replace(/[aeiou]/ig)('*')
 
-//join(m.map(join)) == join(join(m)
-const m = Box(Box(Box(3)))
+const censorAll = map(censor)
 
-const res1 = join(m.map(join))
-const res2 = join(join(m))
+const getAllOdds = filter(isOdd)
 
-console.log(res1,res2);
-
-
-//join(Box.of(m) == join(m.map(Box.of))
-
-const mo = Box('wonder')
-
-const res3 = join(Box.of(mo))
-const res4 = join(mo.map(Box.of))
-
-console.log(res3,res4);
+console.log("censorAll: ", censorAll(['hello', 'world']))
+console.log("getAllOdds: ", getAllOdds([1,2,3,4]))
