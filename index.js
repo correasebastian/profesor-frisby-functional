@@ -1,31 +1,38 @@
-const LazyBox = g =>
+const Box = x =>
     ({
-        fold: f => f(g()),
-        map: f => LazyBox(() => f(g())),
+        map: f => Box(f(x)),
+        fold: f => f(x),
         inspect: function () {
-            console.log('***************');
-            console.log(g());
+            console.log(`Box(${x})`);
             return this;
         }
     })
 
+/* functors
+    fx.map(f).map(g) == fx.map(x => g(f(x)))
+    fx.map(id) == id(fx)
 
-    let a = 'a'
-    let t = 't'
-    let n = 'n'
-    let v = 'v'
-    let z = 'z'
+*/
 
-const result = LazyBox(() => '  64 ')
-    .inspect()
-    .map(abba =>  console.log(a+=1) ||  abba.trim())
-    .inspect()
-    .map(trimmed => console.log(t+=1) || new Number(trimmed))
-    .inspect()
-    .map(number => console.log(n+=1) || number + 1)
-    .inspect()
-    .map(x => console.log(v+=1) || String.fromCharCode(x))
-    .inspect()
-   .fold(x => console.log(z+=1) || x.toLowerCase())
 
-console.log(result)
+ // fx.map(f).map(g) == fx.map(x => g(f(x)))
+const res1 = Box('squirrels')
+    .map(s => s.substr(5))
+    .map(s => s.toUpperCase())
+console.log(res1)
+
+const res2 = Box('squirrels')
+    .map(s => s.substr(5).toUpperCase())
+
+console.log(res2)
+
+
+// fx.map(id) == id(fx)
+
+const id = x => x
+
+const res3 = Box('crayons').map(id)
+const res4 = id(Box('crayons'))
+
+console.log(res3)
+console.log(res4)
